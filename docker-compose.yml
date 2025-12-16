@@ -1,0 +1,12 @@
+services:
+  woc:
+    build: .
+    container_name: woc
+    restart: unless-stopped
+    ports:
+      - "3003:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - BASE_PATH=/woc
+      - ORIGIN=http://wizofcheese.com
