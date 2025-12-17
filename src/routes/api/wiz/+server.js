@@ -1,11 +1,24 @@
 import { json } from '@sveltejs/kit';
 
+console.log('🚀 +server.js FILE LOADED');
+
 export async function POST({ request }) {
-    const { prompt } = await request.json();
-    console.log('Received prompt:', prompt);
+    console.log('🧙 POST HANDLER EXECUTING');
+    
+    let prompt;
     try {
-        console.log('Attempting to connect to Ollama...');
-        const response = await fetch('http://localhost:11434/api/generate', {
+        const body = await request.json();
+        prompt = body.prompt;
+        console.log('📝 Received prompt:', prompt);
+    } catch (e) {
+        console.error('❌ Failed to parse request body:', e);
+        return json({ response: 'Invalid request', error: e.message }, { status: 400 });
+    }
+    
+    try {
+        console.log('🔌 Attempting to connect to Ollama...');
+        
+        const response = await fetch('http://127.0.0.1:11434/api/generate', {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json'
@@ -17,26 +30,29 @@ export async function POST({ request }) {
             })
         });
 
-        console.log('Ollama response status:', response.status);
+        console.log('📡 Ollama response status:', response.status);
         
         if (!response.ok) {
             const errorText = await response.text();
-            console.error('Ollama error response:', errorText);
+            console.error('⚠️ Ollama error response:', errorText);
             throw new Error(`Ollama returned ${response.status}: ${errorText}`);
         }
         
         const data = await response.json();
-        console.log('Ollama response data:', data);
+        console.log('✅ Ollama response data:', data);
         
         return json({ response: data.response });
+        
     } catch (error) {
-        console.error('Full error object:', error);
-        console.error('Error message:', error.message);
-        console.error('Error stack:', error.stack);
+        console.error('❌ CATCH BLOCK - Full error:', error);
+        console.error('❌ Error name:', error.name);
+        console.error('❌ Error message:', error.message);
+        console.error('❌ Error cause:', error.cause);
 
         return json({ 
             response: 'The Wiz is temporarily indisposed.',
-            error: error.message 
+            error: error.message,
+            errorName: error.name
         }, { status: 500 });
     }
 }
