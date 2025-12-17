@@ -2,7 +2,9 @@ import { json } from '@sveltejs/kit';
 
 export async function POST({ request }) {
     const { prompt } = await request.json();
+    console.log('Received prompt:', prompt);
     try {
+        console.log('Attempting to connect to Ollama...');
         const response = await fetch('http://localhost:11434/api/generate', {
             method: 'POST',
             body: JSON.stringify({
@@ -12,10 +14,26 @@ export async function POST({ request }) {
             })
         });
 
+        console.log('Ollama response status:', response.status);
+        
+        if (!response.ok) {
+            const errorText = await response.text();
+            console.error('Ollama error response:', errorText);
+            throw new Error(`Ollama returned ${response.status}: ${errorText}`);
+        }
+        
         const data = await response.json();
+        console.log('Ollama response data:', data);
+        
         return json({ response: data.response });
-    } catch (err) {
-        console.error('Ollama error:', err);
-        return json({ response: "The Wiz is busy consulting the curds. Try again later." }, { status: 500 });
+    } catch (error) {
+        console.error('Full error object:', error);
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
+
+        return json({ 
+            response: 'The Wiz is temporarily indisposed.',
+            error: error.message 
+        }, { status: 500 });
     }
 }
