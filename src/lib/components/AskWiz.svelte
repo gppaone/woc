@@ -19,6 +19,10 @@
         });
         
         const data = await response.json();
+        console.log('📦 Full response data:', data);
+        if (data.debug) {
+            console.error('🐛 Debug info:', data.debug);
+        }
         answer = data.response;
         
         // Trigger the typewriter effect
