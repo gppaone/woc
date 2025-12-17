@@ -17,8 +17,8 @@ export async function POST({ request }) {
     
     try {
         console.log('🔌 Attempting to connect to Ollama...');
-        
-        const response = await fetch('http://127.0.0.1:11434/api/generate', {
+        const OLLAMA_HOST = process.env.OLLAMA_HOST || 'http://localhost:11434';
+        const response = await fetch(`${OLLAMA_HOST}/api/generate`, {
             method: 'POST',
             headers: { 
                 'Content-Type': 'application/json'
