@@ -1,5 +1,6 @@
 <script>
     import { tick } from 'svelte';
+    import { marked } from 'marked';
 
     let question = "";
     let isLoading = false;
@@ -7,6 +8,11 @@
     let scrollContainer;
     let conversation = [];
     let currentTypingIndex = -1;
+
+    marked.setOptions({
+        breaks: true,
+        gfm: true
+    });
 
     async function askWiz() {
         if (!question || isLoading) return;
@@ -53,7 +59,7 @@
     function typeWriter(index) {
         let i = 0;
         const answer = conversation[index].answer;
-        const speed = 30;
+        const speed = 15;
 
         function type() {
             if (i < answer.length) {
@@ -78,6 +84,84 @@
         conversation = conversation;
     }
 </script>
+
+<style>
+    /* Styling for markdown content */
+    :global(.wiz-response h1) {
+        font-size: 1.5em;
+        font-weight: bold;
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+    }
+    
+    :global(.wiz-response h2) {
+        font-size: 1.3em;
+        font-weight: bold;
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+    }
+    
+    :global(.wiz-response h3) {
+        font-size: 1.1em;
+        font-weight: bold;
+        margin-top: 0.5em;
+        margin-bottom: 0.5em;
+    }
+    
+    :global(.wiz-response p) {
+        margin-bottom: 1em;
+    }
+    
+    :global(.wiz-response ul, .wiz-response ol) {
+        margin-left: 1.5em;
+        margin-bottom: 1em;
+    }
+    
+    :global(.wiz-response li) {
+        margin-bottom: 0.5em;
+    }
+    
+    :global(.wiz-response strong) {
+        font-weight: bold;
+        color: #1e40af;
+    }
+    
+    :global(.wiz-response em) {
+        font-style: italic;
+    }
+    
+    :global(.wiz-response code) {
+        background-color: #e0e7ff;
+        padding: 0.2em 0.4em;
+        border-radius: 0.25em;
+        font-family: monospace;
+        font-size: 0.9em;
+    }
+    
+    :global(.wiz-response pre) {
+        background-color: #1e293b;
+        color: #e2e8f0;
+        padding: 1em;
+        border-radius: 0.5em;
+        overflow-x: auto;
+        margin-bottom: 1em;
+    }
+    
+    :global(.wiz-response pre code) {
+        background-color: transparent;
+        padding: 0;
+        color: inherit;
+    }
+    
+    :global(.wiz-response blockquote) {
+        border-left: 4px solid #3b82f6;
+        padding-left: 1em;
+        margin-left: 0;
+        margin-bottom: 1em;
+        font-style: italic;
+        color: #475569;
+    }
+</style>
 
 <!-- Scrollable conversation area -->
 <div 
@@ -118,16 +202,17 @@
         <!-- Wiz answer -->
         {#if item.displayedAnswer}
             <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-xl shadow-sm mt-4">
-                <p class="text-blue-900 font-serif text-lg leading-relaxed">
+                <div class="text-blue-900 font-serif text-lg leading-relaxed">
                     <span class="font-bold block mb-1 text-blue-600">The Wiz says:</span>
-                    {item.displayedAnswer}
+                    <div class="wiz-response">
+                        {@html marked(item.displayedAnswer)}
+                    </div>
                     {#if item.isTyping}
                         <span class="animate-pulse inline-block w-0.5 h-5 bg-blue-400 ml-1">|</span>
                     {/if}
-                </p>
+                </div>
             </div>
         {/if}
-   
         {#if index === currentTypingIndex && isLoading && !item.displayedAnswer}
             <div class="flex items-center space-x-2 p-4 text-blue-400 font-mono mt-4">
                 <span class="animate-bounce">🧙</span>

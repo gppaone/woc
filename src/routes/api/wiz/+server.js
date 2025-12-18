@@ -1,6 +1,6 @@
 import { json } from '@sveltejs/kit';
 
-console.log('🚀 +server.js FILE LOADED');
+console.log('+server.js FILE LOADED');
 
 export async function POST({ request }) {
     console.log('🧙 POST HANDLER EXECUTING');
@@ -11,7 +11,7 @@ export async function POST({ request }) {
         prompt = body.prompt;
         console.log('📝 Received prompt:', prompt);
     } catch (e) {
-        console.error('❌ Failed to parse request body:', e);
+        console.error('Failed to parse request body:', e);
         return json({ response: 'Invalid request', error: e.message }, { status: 400 });
     }
     
@@ -34,12 +34,12 @@ export async function POST({ request }) {
         
         if (!response.ok) {
             const errorText = await response.text();
-            console.error('⚠️ Ollama error response:', errorText);
+            //console.error('Ollama error response:', errorText);
             throw new Error(`Ollama returned ${response.status}: ${errorText}`);
         }
         
         const data = await response.json();
-        console.log('✅ Ollama response data:', data);
+        //console.log('Ollama response data:', data);
         
         return json({ response: data.response });
         
