@@ -1,6 +1,6 @@
 <script>
 	import './layout.css';
-	import favicon from '$lib/assets/favicon.svg';    
+	import favicon from '$lib/assets/favicon.ico';    
     import WocLogo from '$lib/images/woc-logo.svelte';
 
 	let { children } = $props();
