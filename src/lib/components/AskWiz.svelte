@@ -172,6 +172,13 @@
         font-style: italic;
         color: #475569;
     }
+    .wiz-response :global(p) {
+        display: inline;
+    }
+    .wiz-response span {
+        display: inline-block;
+        vertical-align: middle;
+    }
 </style>
 
 <!-- Scrollable conversation area -->
