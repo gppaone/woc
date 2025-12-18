@@ -82,7 +82,7 @@
 <div class="flex flex-col h-full w-full mx-auto relative">
     <div 
         bind:this={scrollContainer}
-        class="flex-1 overflow-y-auto px-4 transition-all duration-500 {hasAsked ? 'pb-32' : 'pb-0'}"
+        class="flex-1 px-4 transition-all duration-500 {hasAsked ? 'pb-32' : 'pb-0'}"
     >
         <div class="w-[768px] mx-auto">
             {#each conversation as item, index}
