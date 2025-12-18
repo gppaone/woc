@@ -1,6 +1,7 @@
 <script>
     import { tick } from 'svelte';
     import { marked } from 'marked';
+    import Arrow from '$lib/images/arrow.svelte';
 
     let question = "";
     let isLoading = false;
@@ -230,21 +231,31 @@
 >
     <div class="pt-4">
         <form on:submit|preventDefault={askWiz} class="relative">
-            <input
+            <textarea
                 bind:value={question}
-                type="text"
+                on:input={(e) => {
+                    e.target.style.height = 'auto';
+                    e.target.style.height = e.target.scrollHeight + 'px';
+                }}
+                on:keydown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        askWiz();
+                    }
+                }}
                 placeholder="Ask the Wiz..."
-                class="w-full bg-white border-2 border-blue-500 rounded-2xl p-4 pr-16 font-mono shadow-lg outline-none focus:ring-4 focus:ring-blue-100"
-            />
+                rows="1"
+                class="w-full bg-white border-2 border-blue-500 rounded-2xl p-4 pr-16 font-mono shadow-lg outline-none focus:ring-4 focus:ring-blue-100 resize-none overflow-hidden min-h-[56px] max-h-[200px]"
+            ></textarea>
             <button
                 type="submit"
                 disabled={isLoading}
-                class="absolute right-3 top-2 bottom-2 bg-blue-500 text-white px-4 rounded-xl hover:bg-blue-600 disabled:bg-gray-300 transition-all"
+                class="absolute right-3 bottom-3 bg-blue-500 text-white px-4 py-2 rounded-xl hover:bg-blue-600 disabled:bg-gray-300 transition-all"
             >
                 {#if isLoading}
                     <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
                 {:else}
-                    Send
+                    <Arrow class="w-5 h-5" />
                 {/if}
             </button>
         </form>
