@@ -94,6 +94,22 @@
         conversation[index].collapsed = !conversation[index].collapsed;
         conversation = conversation;
     }
+
+    function getDisplayedHtml(markdown, isTyping) {
+        let html = marked(markdown);
+        
+        if (isTyping) {
+            const cursor = '<span class="animate-pulse w-0.5 h-5 bg-blue-400 ml-1 inline-block">|</span>';
+            
+            if (html.includes('</')) {
+                html = html.replace(/(<\/[^>]+>)$/, `${cursor}$1`);
+            } else {
+                html += cursor;
+            }
+        }
+        
+        return html;
+    }
 </script>
 
 <style>
@@ -172,13 +188,6 @@
         font-style: italic;
         color: #475569;
     }
-    .wiz-response :global(p) {
-        display: inline;
-    }
-    .wiz-response span {
-        display: inline-block;
-        vertical-align: middle;
-    }
 </style>
 
 <!-- Scrollable conversation area -->
@@ -223,10 +232,7 @@
                 <div class="text-blue-900 font-serif text-lg leading-relaxed">
                     <span class="font-bold block mb-1 text-blue-600">The Wiz says:</span>
                     <div class="wiz-response">
-                        {@html marked(item.displayedAnswer)}
-                        {#if item.isTyping}
-                            <span class="animate-pulse inline-block w-0.5 h-5 bg-blue-400 ml-1">|</span>
-                        {/if}
+                        {@html getDisplayedHtml(item.displayedAnswer, item.isTyping)}
                     </div>
 
                 </div>
