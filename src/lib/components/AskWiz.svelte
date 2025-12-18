@@ -84,7 +84,7 @@
         bind:this={scrollContainer}
         class="flex-1 px-4 transition-all duration-500 {hasAsked ? 'pb-32' : 'pb-0'}"
     >
-        <div class="w-[768px] mx-auto">
+        <div class="w-auto md:w-[768px] mx-auto">
             {#each conversation as item, index}
                 <!-- user prompt -->
                 <div class="mt-6">
@@ -141,7 +141,7 @@
 
     <!-- Form - floats and centers when no content -->
     <div 
-        class="fixed left-0 right-0 transition-all duration-500 {hasAsked 
+        class="fixed left-0 right-0 transition-all duration-500 px-4 {hasAsked 
             ? 'bottom-0 bg-blue-300' 
             : 'bottom-1/2 translate-y-1/2'}"
     >
