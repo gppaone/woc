@@ -127,17 +127,7 @@
                 </p>
             </div>
         {/if}
-        <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-xl shadow-sm mt-4">
-            <p class="text-blue-900 font-serif text-lg leading-relaxed">
-                <span class="font-bold block mb-1 text-blue-600">The Wiz says:</span>
-                My young friend, the ways of the heart and the realm of fromage are not always straightforward. Yet, as the Wiz of Cheese, I shall offer you guidance on deciphering the mysteries of your wife's affection for cheese. Observe her behavior when cheese is involved. Does she delight in its presence, smiling and laughing with an unbridled enthusiasm? Or does she approach it with caution, taking a small nibble before declaring her love or, conversely, her distaste? Pay attention to the aroma that wafts from her direction; if it's a savory bouquet of melting bliss, you may be onto something. Consider her snack choices. Does she reach for crackers and cheddar when alone, or does she
-                My young friend, the ways of the heart and the realm of fromage are not always straightforward. Yet, as the Wiz of Cheese, I shall offer you guidance on deciphering the mysteries of your wife's affection for cheese. Observe her behavior when cheese is involved. Does she delight in its presence, smiling and laughing with an unbridled enthusiasm? Or does she approach it with caution, taking a small nibble before declaring her love or, conversely, her distaste? Pay attention to the aroma that wafts from her direction; if it's a savory bouquet of melting bliss, you may be onto something. Consider her snack choices. Does she reach for crackers and cheddar when alone, or does she
-
-                {#if item.isTyping}
-                    <span class="animate-pulse inline-block w-0.5 h-5 bg-blue-400 ml-1">|</span>
-                {/if}
-            </p>
-        </div>        
+   
         {#if index === currentTypingIndex && isLoading && !item.displayedAnswer}
             <div class="flex items-center space-x-2 p-4 text-blue-400 font-mono mt-4">
                 <span class="animate-bounce">🧙</span>
