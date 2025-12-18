@@ -79,95 +79,102 @@
     }
 </script>
 
-<div class="flex flex-col h-full w-full mx-auto relative">
-    <div 
-        bind:this={scrollContainer}
-        class="flex-1 px-4 transition-all duration-500 {hasAsked ? 'pb-32' : 'pb-0'}"
-    >
-        <div class="w-auto md:w-[768px] mx-auto">
-            {#each conversation as item, index}
-                <!-- user prompt -->
-                <div class="mt-6">
-                    <div class="bg-gray-100 border-l-4 border-gray-400 p-4 rounded-r-xl shadow-sm">
-                        <p class="font-bold text-gray-700 mb-1">You asked:</p>
-                        {#if item.prompt.length > 100 && item.collapsed !== false}
-                            <p class="text-gray-800">
-                                {item.prompt.slice(0, 100)}...
-                                <button 
-                                    on:click={() => togglePrompt(index)}
-                                    class="text-blue-500 hover:text-blue-700 ml-2 underline text-sm"
-                                >
-                                    Show more
-                                </button>
-                            </p>
-                        {:else}
-                            <p class="text-gray-800">
-                                {item.prompt}
-                                {#if item.prompt.length > 100}
-                                    <button 
-                                        on:click={() => togglePrompt(index)}
-                                        class="text-blue-500 hover:text-blue-700 ml-2 underline text-sm"
-                                    >
-                                        Show less
-                                    </button>
-                                {/if}
-                            </p>
+<!-- Scrollable conversation area -->
+<div 
+    bind:this={scrollContainer}
+    class="flex-1 px-4 transition-all duration-500 {hasAsked ? 'pb-4' : 'pb-0'}"
+>
+    {#each conversation as item, index}
+        <!-- User prompt -->
+        <div class="mt-6">
+            <div class="bg-gray-100 border-l-4 border-gray-400 p-4 rounded-r-xl shadow-sm">
+                <p class="font-bold text-gray-700 mb-1">You asked:</p>
+                {#if item.prompt.length > 100 && item.collapsed !== false}
+                    <p class="text-gray-800">
+                        {item.prompt.slice(0, 100)}...
+                        <button 
+                            on:click={() => togglePrompt(index)}
+                            class="text-blue-500 hover:text-blue-700 ml-2 underline text-sm"
+                        >
+                            Show more
+                        </button>
+                    </p>
+                {:else}
+                    <p class="text-gray-800">
+                        {item.prompt}
+                        {#if item.prompt.length > 100}
+                            <button 
+                                on:click={() => togglePrompt(index)}
+                                class="text-blue-500 hover:text-blue-700 ml-2 underline text-sm"
+                            >
+                                Show less
+                            </button>
                         {/if}
-                    </div>
-                </div>
-
-                <!-- wiz answer -->
-                {#if item.displayedAnswer}
-                    <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-xl shadow-sm mt-4">
-                        <p class="text-blue-900 font-serif text-lg leading-relaxed">
-                            <span class="font-bold block mb-1 text-blue-600">The Wiz says:</span>
-                            {item.displayedAnswer}
-                            {#if item.isTyping}
-                                <span class="animate-pulse inline-block w-0.5 h-5 bg-blue-400 ml-1">|</span>
-                            {/if}
-                        </p>
-                    </div>
+                    </p>
                 {/if}
-                
-                {#if index === currentTypingIndex && isLoading && !item.displayedAnswer}
-                    <div class="flex items-center space-x-2 p-4 text-blue-400 font-mono mt-4">
-                        <span class="animate-bounce">🧙</span>
-                        <span>The Wiz is consulting the curds...</span>
-                    </div>
-                {/if}
-            {/each}
+            </div>
         </div>
-    </div>
 
-    <!-- Form - floats and centers when no content -->
-    <div 
-        class="fixed left-0 right-0 transition-all duration-500 px-4 {hasAsked 
-            ? 'bottom-0 bg-blue-300' 
-            : 'bottom-1/2 translate-y-1/2'}"
-    >
-        <div class="max-w-3xl mx-auto pt-4">
-            <form on:submit|preventDefault={askWiz} class="relative">
-                <input
-                    bind:value={question}
-                    type="text"
-                    placeholder="Ask the Wiz..."
-                    class="w-full bg-white border-2 border-blue-500 rounded-2xl p-4 pr-16 font-mono shadow-lg outline-none focus:ring-4 focus:ring-blue-100"
-                />
-                <button
-                    type="submit"
-                    disabled={isLoading}
-                    class="absolute right-3 top-2 bottom-2 bg-blue-500 text-white px-4 rounded-xl hover:bg-blue-600 disabled:bg-gray-300 transition-all"
-                >
-                    {#if isLoading}
-                        <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    {:else}
-                        Send
+        <!-- Wiz answer -->
+        {#if item.displayedAnswer}
+            <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-xl shadow-sm mt-4">
+                <p class="text-blue-900 font-serif text-lg leading-relaxed">
+                    <span class="font-bold block mb-1 text-blue-600">The Wiz says:</span>
+                    {item.displayedAnswer}
+                    {#if item.isTyping}
+                        <span class="animate-pulse inline-block w-0.5 h-5 bg-blue-400 ml-1">|</span>
                     {/if}
-                </button>
-            </form>
-        </div>
-        <div class="text-center text-xs text-blue-800 p-2">
-            <p>WizofCheese is AI and can make mistakes. Please double-check responses.</p>
-        </div>
+                </p>
+            </div>
+        {/if}
+        <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-xl shadow-sm mt-4">
+            <p class="text-blue-900 font-serif text-lg leading-relaxed">
+                <span class="font-bold block mb-1 text-blue-600">The Wiz says:</span>
+                My young friend, the ways of the heart and the realm of fromage are not always straightforward. Yet, as the Wiz of Cheese, I shall offer you guidance on deciphering the mysteries of your wife's affection for cheese. Observe her behavior when cheese is involved. Does she delight in its presence, smiling and laughing with an unbridled enthusiasm? Or does she approach it with caution, taking a small nibble before declaring her love or, conversely, her distaste? Pay attention to the aroma that wafts from her direction; if it's a savory bouquet of melting bliss, you may be onto something. Consider her snack choices. Does she reach for crackers and cheddar when alone, or does she
+                My young friend, the ways of the heart and the realm of fromage are not always straightforward. Yet, as the Wiz of Cheese, I shall offer you guidance on deciphering the mysteries of your wife's affection for cheese. Observe her behavior when cheese is involved. Does she delight in its presence, smiling and laughing with an unbridled enthusiasm? Or does she approach it with caution, taking a small nibble before declaring her love or, conversely, her distaste? Pay attention to the aroma that wafts from her direction; if it's a savory bouquet of melting bliss, you may be onto something. Consider her snack choices. Does she reach for crackers and cheddar when alone, or does she
+
+                {#if item.isTyping}
+                    <span class="animate-pulse inline-block w-0.5 h-5 bg-blue-400 ml-1">|</span>
+                {/if}
+            </p>
+        </div>        
+        {#if index === currentTypingIndex && isLoading && !item.displayedAnswer}
+            <div class="flex items-center space-x-2 p-4 text-blue-400 font-mono mt-4">
+                <span class="animate-bounce">🧙</span>
+                <span>The Wiz is consulting the curds...</span>
+            </div>
+        {/if}
+    {/each}
+</div>
+
+<!-- Form - sticks to bottom of chat container (not screen) -->
+<div 
+    class="absolute left-0 right-0 px-4 transition-all duration-500 {hasAsked 
+            ? 'bottom-0 sticky z-10 bg-blue-300' 
+            : 'top-1/2 -translate-y-1/2 bg-transparent'}"
+>
+    <div class="pt-4">
+        <form on:submit|preventDefault={askWiz} class="relative">
+            <input
+                bind:value={question}
+                type="text"
+                placeholder="Ask the Wiz..."
+                class="w-full bg-white border-2 border-blue-500 rounded-2xl p-4 pr-16 font-mono shadow-lg outline-none focus:ring-4 focus:ring-blue-100"
+            />
+            <button
+                type="submit"
+                disabled={isLoading}
+                class="absolute right-3 top-2 bottom-2 bg-blue-500 text-white px-4 rounded-xl hover:bg-blue-600 disabled:bg-gray-300 transition-all"
+            >
+                {#if isLoading}
+                    <div class="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                {:else}
+                    Send
+                {/if}
+            </button>
+        </form>
+    </div>
+    <div class="text-center text-xs text-blue-600 py-2">
+        <p>WizofCheese is AI and can make mistakes. Please double-check responses.</p>
     </div>
 </div>
