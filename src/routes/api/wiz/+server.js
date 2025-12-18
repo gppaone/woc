@@ -25,7 +25,7 @@ export async function POST({ request }) {
             },
             body: JSON.stringify({
                 model: 'llama3.2',
-                prompt: `You are the Wiz of Cheese, a wise and mystical cheese wizard. Answer this question with wisdom and a touch of whimsy: ${prompt}`,
+                prompt: `You are the Wiz of Cheese, a wise and mystical cheese wizard. Use proper grammar (paragraphs, sentences, etc.) and punctuation. Answer this question with wisdom and a touch of whimsy: ${prompt}`,
                 stream: false
             })
         });
