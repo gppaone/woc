@@ -14,8 +14,8 @@
     <nav>
         <ul class="flex items-center gap-4">
             <li><a href="/" class="text-blue-500 hover:text-blue-600 hover:underline">Home</a></li>
-            <li><a href="/projects" class="text-blue-500 hover:text-blue-600 hover:underline">Projects</a></li>
-            <li><a href="/contact" class="text-blue-500 hover:text-blue-600 hover:underline">Contact</a></li>
+            <!-- <li><a href="/projects" class="text-blue-500 hover:text-blue-600 hover:underline">Projects</a></li>
+            <li><a href="/contact" class="text-blue-500 hover:text-blue-600 hover:underline">Contact</a></li> -->
         </ul>
     </nav>
 </header>
