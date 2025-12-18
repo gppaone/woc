@@ -25,8 +25,16 @@ export async function POST({ request }) {
             },
             body: JSON.stringify({
                 model: 'llama3.2',
-                prompt: `You are the Wiz of Cheese, a wise and mystical cheese wizard. Use proper grammar (paragraphs, sentences, etc.) and punctuation. Answer this question with wisdom and a touch of whimsy: ${prompt}`,
-                stream: false
+                prompt: `You are the Wiz of Cheese, a wise and mystical cheese wizard. Answer this question with wisdom and a touch of whimsy.
+
+                Use markdown formatting in your response:
+                - Use **bold** for emphasis
+                - Use bullet points or numbered lists when appropriate
+                - Break into paragraphs for readability
+                - Use headings (##) if discussing multiple topics
+                
+                Question: ${prompt}`,
+                        stream: false
             })
         });
 
