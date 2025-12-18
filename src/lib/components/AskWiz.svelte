@@ -32,7 +32,17 @@
         }];
         
         currentTypingIndex = conversation.length - 1;
-        
+
+        await tick();
+        setTimeout(() => {
+            if (scrollContainer) {
+                window.scrollTo({
+                    top: window.scrollY + window.innerHeight,
+                    behavior: 'smooth'
+                });
+            }
+        }, 50);  
+
         try {
             const response = await fetch('/api/wiz', {
                 method: 'POST',
@@ -207,10 +217,11 @@
                     <span class="font-bold block mb-1 text-blue-600">The Wiz says:</span>
                     <div class="wiz-response">
                         {@html marked(item.displayedAnswer)}
+                        {#if item.isTyping}
+                            <span class="animate-pulse inline-block w-0.5 h-5 bg-blue-400 ml-1">|</span>
+                        {/if}
                     </div>
-                    {#if item.isTyping}
-                        <span class="animate-pulse inline-block w-0.5 h-5 bg-blue-400 ml-1">|</span>
-                    {/if}
+
                 </div>
             </div>
         {/if}
