@@ -2,7 +2,7 @@
     import woc from '$lib/images/wizofcheeze01-animated.gif';
     import AskWiz from '$lib/components/AskWiz.svelte';
 </script>
-<div class="flex p-2 md:p-4 h-screen">
+<div class="flex p-2 md:p-4 h-full">
     <!-- Wizard image - sticky on left -->
     <div class="hidden md:block w-[25%] sticky top-4 self-start">
         <img src={woc} alt="Wiz of Cheese" class="w-full" />
