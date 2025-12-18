@@ -20,6 +20,3 @@
     </nav>
 </header>
 <main>{@render children()}</main>
-<footer class="text-center text-sm text-blue-500">
-    <p>Copyright 2025 Wiz of Cheese</p>
-</footer>
