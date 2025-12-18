@@ -2,84 +2,140 @@
     import { tick } from 'svelte';
 
     let question = "";
-    let answer = ""; // The full response from the API
-    let displayedAnswer = ""; // What the user actually sees typing out
     let isLoading = false;
     let hasAsked = false;
     let scrollContainer;
+    let conversation = [];
+    let currentTypingIndex = -1;
 
     async function askWiz() {
         if (!question || isLoading) return;
+        
+        const userPrompt = question;
+        question = "";
         isLoading = true;
         hasAsked = true;
-        answer = ""; 
-        displayedAnswer = "";
+        
+        // create convo
+        conversation = [...conversation, {
+            prompt: userPrompt,
+            answer: "",
+            displayedAnswer: "",
+            isTyping: true
+        }];
+        
+        currentTypingIndex = conversation.length - 1;
+        
         try {
             const response = await fetch('/api/wiz', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ prompt: question })
-        });
-        
-        const data = await response.json();
-        console.log('📦 Full response data:', data);
-        if (data.debug) {
-            console.error('🐛 Debug info:', data.debug);
-        }
-        answer = data.response;
-        
-        // Trigger the typewriter effect
-        typeWriter();
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ prompt: userPrompt })
+            });
+            
+            const data = await response.json();
+            
+            conversation[currentTypingIndex].answer = data.response;
+            conversation = conversation;
+            
+            typeWriter(currentTypingIndex);
+            
         } catch (err) {
             console.error(err);
-            displayedAnswer = "The Wiz's crystal ball is foggy. Try again.";
+            conversation[currentTypingIndex].displayedAnswer = "The Wiz's crystal ball is foggy. Try again.";
+            conversation[currentTypingIndex].isTyping = false;
+            conversation = conversation;
         } finally {
             isLoading = false;
-            question = "";
         }
     }
 
-    function typeWriter() {
+    function typeWriter(index) {
         let i = 0;
-        displayedAnswer = "";
-        const speed = 30; // Milliseconds per character
+        const answer = conversation[index].answer;
+        const speed = 30;
 
         function type() {
             if (i < answer.length) {
-                displayedAnswer += answer.charAt(i);
+                conversation[index].displayedAnswer += answer.charAt(i);
+                conversation = conversation;
                 i++;
-                if(scrollContainer) {
+                
+                if (scrollContainer) {
                     scrollContainer.scrollTop = scrollContainer.scrollHeight;
                 }
                 setTimeout(type, speed);
+            } else {
+                conversation[index].isTyping = false;
+                conversation = conversation;
             }
         }
         type();
     }
+
+    function togglePrompt(index) {
+        conversation[index].collapsed = !conversation[index].collapsed;
+        conversation = conversation;
+    }
 </script>
 
 <div class="flex flex-col h-screen w-full mx-auto relative">
-    <!-- Scrollable content area -->
     <div 
         bind:this={scrollContainer}
-        class="flex-1 px-4 transition-all duration-500 {hasAsked ? 'pb-32' : 'pb-0'}"
+        class="flex-1 overflow-y-auto px-4 transition-all duration-500 {hasAsked ? 'pb-32' : 'pb-0'}"
     >
         <div class="w-[768px] mx-auto">
-            {#if displayedAnswer}
-                <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-xl shadow-sm mt-6">
-                    <p class="text-blue-900 font-serif text-lg leading-relaxed">
-                        <span class="font-bold block mb-1 text-blue-600">The Wiz says:</span>
-                        {displayedAnswer}<span class="animate-pulse inline-block w-2 h-5 bg-blue-400 ml-1">|</span>
-                    </p>
+            {#each conversation as item, index}
+                <!-- user prompt -->
+                <div class="mt-6">
+                    <div class="bg-gray-100 border-l-4 border-gray-400 p-4 rounded-r-xl shadow-sm">
+                        <p class="font-bold text-gray-700 mb-1">You asked:</p>
+                        {#if item.prompt.length > 100 && item.collapsed !== false}
+                            <p class="text-gray-800">
+                                {item.prompt.slice(0, 100)}...
+                                <button 
+                                    on:click={() => togglePrompt(index)}
+                                    class="text-blue-500 hover:text-blue-700 ml-2 underline text-sm"
+                                >
+                                    Show more
+                                </button>
+                            </p>
+                        {:else}
+                            <p class="text-gray-800">
+                                {item.prompt}
+                                {#if item.prompt.length > 100}
+                                    <button 
+                                        on:click={() => togglePrompt(index)}
+                                        class="text-blue-500 hover:text-blue-700 ml-2 underline text-sm"
+                                    >
+                                        Show less
+                                    </button>
+                                {/if}
+                            </p>
+                        {/if}
+                    </div>
                 </div>
-            {/if}
-            
-            {#if isLoading && !displayedAnswer}
-                <div class="flex items-center space-x-2 p-4 text-blue-400 font-mono mt-6">
-                    <span class="animate-bounce">🧙</span>
-                    <span>The Wiz is consulting the curds...</span>
-                </div>
-            {/if}
+
+                <!-- wiz answer -->
+                {#if item.displayedAnswer}
+                    <div class="bg-blue-50 border-l-4 border-blue-500 p-6 rounded-r-xl shadow-sm mt-4">
+                        <p class="text-blue-900 font-serif text-lg leading-relaxed">
+                            <span class="font-bold block mb-1 text-blue-600">The Wiz says:</span>
+                            {item.displayedAnswer}
+                            {#if item.isTyping}
+                                <span class="animate-pulse inline-block w-0.5 h-5 bg-blue-400 ml-1">|</span>
+                            {/if}
+                        </p>
+                    </div>
+                {/if}
+                
+                {#if index === currentTypingIndex && isLoading && !item.displayedAnswer}
+                    <div class="flex items-center space-x-2 p-4 text-blue-400 font-mono mt-4">
+                        <span class="animate-bounce">🧙</span>
+                        <span>The Wiz is consulting the curds...</span>
+                    </div>
+                {/if}
+            {/each}
         </div>
     </div>
 
