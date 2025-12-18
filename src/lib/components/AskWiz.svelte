@@ -95,25 +95,6 @@
         conversation = conversation;
     }
 
-    function getDisplayedHtml(markdown, isTyping) {
-        if (!markdown) return '';
-        
-        // 1. Convert markdown to HTML
-        let html = marked.parse(markdown);
-        
-        if (isTyping) {
-            const cursor = '<span class="animate-pulse w-0.5 h-5 bg-blue-400 ml-1 inline-block" style="vertical-align: middle;"></span>';
-            html = html.trim();
-
-            if (html.endsWith('</p>') || html.endsWith('</li>') || html.endsWith('</div>')) {
-                html = html.replace(/(<\/[^>]+>)$/, `${cursor}$1`);
-            } else {
-                html += cursor;
-            }
-        }
-        
-        return html;
-    }
 </script>
 
 <style>
@@ -236,7 +217,7 @@
                 <div class="text-blue-900 font-serif text-lg leading-relaxed">
                     <span class="font-bold block mb-1 text-blue-600">The Wiz says:</span>
                     <div class="wiz-response">
-                        {@html getDisplayedHtml(item.displayedAnswer, item.isTyping)}
+                        {@html marked(item.displayedAnswer)}
                     </div>
 
                 </div>

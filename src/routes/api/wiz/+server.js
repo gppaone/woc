@@ -3,20 +3,20 @@ import { json } from '@sveltejs/kit';
 console.log('+server.js FILE LOADED');
 
 export async function POST({ request }) {
-    console.log('🧙 POST HANDLER EXECUTING');
+    console.log('POST HANDLER EXECUTING');
     
     let prompt;
     try {
         const body = await request.json();
         prompt = body.prompt;
-        console.log('📝 Received prompt:', prompt);
+        console.log('Received prompt:', prompt);
     } catch (e) {
         console.error('Failed to parse request body:', e);
         return json({ response: 'Invalid request', error: e.message }, { status: 400 });
     }
     
     try {
-        console.log('🔌 Attempting to connect to Ollama...');
+        console.log('Attempting to connect to Ollama...');
         const OLLAMA_HOST = process.env.OLLAMA_HOST || 'http://localhost:11434';
         const response = await fetch(`${OLLAMA_HOST}/api/generate`, {
             method: 'POST',
@@ -38,7 +38,7 @@ export async function POST({ request }) {
             })
         });
 
-        console.log('📡 Ollama response status:', response.status);
+        console.log('Ollama response status:', response.status);
         
         if (!response.ok) {
             const errorText = await response.text();
