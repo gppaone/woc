@@ -44,10 +44,20 @@
         }, 50);  
 
         try {
+            const historyToSend = conversation
+            .slice(Math.max(0, conversation.length - 6), -1)
+            .map(item => ({
+                prompt: item.prompt,
+                answer: item.answer
+            }));
+        
             const response = await fetch('/api/wiz', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ prompt: userPrompt })
+                body: JSON.stringify({ 
+                    prompt: userPrompt,
+                    conversationHistory: historyToSend
+                })
             });
             
             const data = await response.json();

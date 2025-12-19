@@ -1,23 +1,44 @@
 import { json } from '@sveltejs/kit';
 
-console.log('+server.js FILE LOADED');
+const OLLAMA_HOST = process.env.OLLAMA_HOST || 'http://localhost:11434';
 
 export async function POST({ request }) {
-    console.log('POST HANDLER EXECUTING');
-    
-    let prompt;
+    let body;
     try {
-        const body = await request.json();
-        prompt = body.prompt;
-        console.log('Received prompt:', prompt);
+        body = await request.json();
+        console.log('Received request:', body);
     } catch (e) {
-        console.error('Failed to parse request body:', e);
+        console.error('❌ Failed to parse request body:', e);
         return json({ response: 'Invalid request', error: e.message }, { status: 400 });
     }
     
+    const { prompt, conversationHistory } = body;
+    
     try {
-        console.log('Attempting to connect to Ollama...');
-        const OLLAMA_HOST = process.env.OLLAMA_HOST || 'http://localhost:11434';
+        console.log(`🔌 Connecting to Ollama at ${OLLAMA_HOST}...`);
+        
+        // Build the full conversation context
+        let fullPrompt = `You are the Wiz of Cheese, a wise and mystical cheese wizard. Answer questions with wisdom and a touch of whimsy.
+
+        Use markdown formatting in your response:
+        - Use **bold** for emphasis
+        - Use bullet points or numbered lists when appropriate
+        - Break into paragraphs for readability
+        - Use headings (##) if discussing multiple topics
+
+        `;
+
+        // Add conversation history if it exists
+        if (conversationHistory && conversationHistory.length > 0) {
+            fullPrompt += "Previous conversation:\n\n";
+            conversationHistory.forEach(item => {
+                fullPrompt += `User: ${item.prompt}\n`;
+                fullPrompt += `Wiz: ${item.answer}\n\n`;
+            });
+        }
+        
+        fullPrompt += `Current question: ${prompt}`;
+        
         const response = await fetch(`${OLLAMA_HOST}/api/generate`, {
             method: 'POST',
             headers: { 
@@ -25,16 +46,8 @@ export async function POST({ request }) {
             },
             body: JSON.stringify({
                 model: 'llama3.2',
-                prompt: `You are the Wiz of Cheese, a wise and mystical cheese wizard. Answer this question with wisdom and a touch of whimsy.
-
-                Use markdown formatting in your response:
-                - Use **bold** for emphasis
-                - Use bullet points or numbered lists when appropriate
-                - Break into paragraphs for readability
-                - Use headings (##) if discussing multiple topics
-                
-                Question: ${prompt}`,
-                        stream: false
+                prompt: fullPrompt,
+                stream: false
             })
         });
 
@@ -42,25 +55,20 @@ export async function POST({ request }) {
         
         if (!response.ok) {
             const errorText = await response.text();
-            //console.error('Ollama error response:', errorText);
+            console.error('Ollama error response:', errorText);
             throw new Error(`Ollama returned ${response.status}: ${errorText}`);
         }
         
         const data = await response.json();
-        //console.log('Ollama response data:', data);
+        console.log('Got response from Ollama');
         
         return json({ response: data.response });
         
     } catch (error) {
-        console.error('❌ CATCH BLOCK - Full error:', error);
-        console.error('❌ Error name:', error.name);
-        console.error('❌ Error message:', error.message);
-        console.error('❌ Error cause:', error.cause);
-
+        console.error('❌ Error:', error.message);
         return json({ 
             response: 'The Wiz is temporarily indisposed.',
-            error: error.message,
-            errorName: error.name
+            error: error.message
         }, { status: 500 });
     }
 }
