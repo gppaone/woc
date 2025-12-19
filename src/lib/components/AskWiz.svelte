@@ -10,6 +10,9 @@
     let conversation = [];
     let currentTypingIndex = -1;
 
+    export let onLoadingChange = () => {};
+    $: onLoadingChange(isLoading);
+    
     marked.setOptions({
         breaks: true,
         gfm: true
