@@ -1,4 +1,6 @@
 import { json } from '@sveltejs/kit';
+import fs from 'fs';
+import path from 'path';
 
 const OLLAMA_HOST = process.env.OLLAMA_HOST || 'http://localhost:11434';
 const LOG_FILE = path.join(process.cwd(), 'logs', 'wiz-analytics.jsonl');
@@ -106,7 +108,7 @@ export async function POST({ request }) {
             type: 'error',
             error: error.message
         });
-        
+
         return json({ 
             response: 'The Wiz is temporarily indisposed.',
             error: error.message
