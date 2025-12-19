@@ -3,28 +3,6 @@ import fs from 'fs';
 import path from 'path';
 
 const OLLAMA_HOST = process.env.OLLAMA_HOST || 'http://localhost:11434';
-const LOG_FILE = path.join(process.cwd(), 'logs', 'wiz-analytics.jsonl');
-
-// logging
-try {
-    if (!fs.existsSync(path.join(process.cwd(), 'logs'))) {
-        fs.mkdirSync(path.join(process.cwd(), 'logs'), { recursive: true });
-    }
-} catch (err) {
-    console.error('Failed to create logs directory:', err);
-}
-
-function logInteraction(data) {
-    try {
-        const logEntry = {
-            timestamp: new Date().toISOString(),
-            ...data
-        };
-        fs.appendFileSync(LOG_FILE, JSON.stringify(logEntry) + '\n');
-    } catch (err) {
-        console.error('Failed to write log:', err);
-    }
-}
 
 export async function POST({ request }) {
     let body;
@@ -37,12 +15,6 @@ export async function POST({ request }) {
     }
     
     const { prompt, conversationHistory } = body;
-
-    logInteraction({
-        ip: clientIP,
-        prompt: prompt,
-        conversationLength: conversationHistory?.length || 0
-    });
     
     try {
         console.log(`🔌 Connecting to Ollama at ${OLLAMA_HOST}...`);
@@ -92,22 +64,10 @@ export async function POST({ request }) {
         const data = await response.json();
         console.log('Got response from Ollama');
 
-        logInteraction({
-            ip: clientIP,
-            type: 'response',
-            responseLength: data.response.length
-        });
-
         return json({ response: data.response });
         
     } catch (error) {
         console.error('❌ Error:', error.message);
-
-        logInteraction({
-            ip: clientIP,
-            type: 'error',
-            error: error.message
-        });
 
         return json({ 
             response: 'The Wiz is temporarily indisposed.',
