@@ -1,15 +1,29 @@
 <script>
+	import { onMount } from 'svelte';
 	import './layout.css';
 	import favicon from '$lib/assets/favicon.ico';    
     import WocLogo from '$lib/images/woc-logo.svelte';
     import { resetChat } from '$lib/stores/chatStore';
 	
     let { children } = $props();
-
+    let isMobileLandscape = $state(false);
+    
 	function handleNewChat(e) {
 		e.preventDefault();
 		resetChat();
 	}
+
+	onMount(() => {
+		const checkOrientation = () => {
+			// Mobile landscape: width > height and width < 768px (md breakpoint)
+			isMobileLandscape = window.innerWidth > window.innerHeight;
+		};
+		
+		checkOrientation();
+		window.addEventListener('resize', checkOrientation);
+		
+		return () => window.removeEventListener('resize', checkOrientation);
+	});
     
 </script>
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
@@ -25,4 +39,4 @@
         </ul>
     </nav>
 </header>
-<main>{@render children()}</main>
+<main class={isMobileLandscape ? 'h-screen' : ''}>{@render children()}</main>

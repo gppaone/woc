@@ -10,10 +10,11 @@
 
     onMount(() => {
         const checkOrientation = () => {
-        // Mobile landscape: width > height and width < 768px (md breakpoint)
-        isMobileLandscape = window.innerWidth < 768 && window.innerWidth > window.innerHeight;
+            // Mobile landscape: width > height and width < 768px (md breakpoint)
+            isMobileLandscape = window.innerWidth > window.innerHeight;
         };
         
+
         checkOrientation();
         window.addEventListener('resize', checkOrientation);
         
