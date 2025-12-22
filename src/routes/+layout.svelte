@@ -10,6 +10,7 @@
 		e.preventDefault();
 		resetChat();
 	}
+    
 </script>
 <svelte:head><link rel="icon" href={favicon} /></svelte:head>
 <header class="flex justify-between items-center px-4 py-2 m-0">
@@ -19,7 +20,6 @@
     </div>
     <nav>
         <ul class="flex items-center gap-4">
-            <li><a href="/" class="text-blue-500 hover:text-blue-600 hover:underline">Home</a></li>
             <li><a href="/" class="text-blue-500 hover:text-blue-600 hover:underline" onclick={handleNewChat}>+ New Chat</a></li>
             <!--<li><a href="/contact" class="text-blue-500 hover:text-blue-600 hover:underline">Contact</a></li> -->
         </ul>
