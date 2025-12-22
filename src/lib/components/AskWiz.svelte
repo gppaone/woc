@@ -2,6 +2,7 @@
     import { tick } from 'svelte';
     import { marked } from 'marked';
     import Arrow from '$lib/images/arrow.svelte';
+    import { chatReset } from '$lib/stores/chatStore';
 
     let question = "";
     let isLoading = false;
@@ -9,8 +10,11 @@
     let scrollContainer;
     let conversation = [];
     let currentTypingIndex = -1;
+    let lastResetValue = 0;
 
+    export let onResponseChange;
     export let onLoadingChange = () => {};
+
     $: onLoadingChange(isLoading);
     
     marked.setOptions({
@@ -18,9 +22,20 @@
         gfm: true
     });
 
+    $: if ($chatReset !== lastResetValue) {
+        lastResetValue = $chatReset;
+        conversation = [];
+        currentTypingIndex = -1;
+        hasAsked = false;
+        isLoading = false;
+        question = "";
+        onResponseChange(false);
+        onLoadingChange(false);
+    }
+
     async function askWiz() {
         if (!question || isLoading) return;
-        
+        onResponseChange(false);
         const userPrompt = question;
         question = "";
         isLoading = true;
@@ -67,7 +82,7 @@
             
             conversation[currentTypingIndex].answer = data.response;
             conversation = conversation;
-            
+            onResponseChange(true);
             typeWriter(currentTypingIndex);
             
         } catch (err) {
@@ -75,6 +90,7 @@
             conversation[currentTypingIndex].displayedAnswer = "The Wiz's crystal ball is foggy. Try again.";
             conversation[currentTypingIndex].isTyping = false;
             conversation = conversation;
+            onLoadingChange(false);
         } finally {
             isLoading = false;
         }
